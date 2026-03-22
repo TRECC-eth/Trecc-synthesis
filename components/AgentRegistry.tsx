@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { ShieldCheck, UserPlus, Loader2, Zap } from 'lucide-react';
-import { registryAbi } from '../constants/abi/registryAbi';
-import { reputationAbi } from '../constants/abi/reputationAbi';
-import { validationAbi } from '../constants/abi/validationAbi';
+import { registryABI } from '../constants/abi/registryAbi';
+import { reputationABI } from '../constants/abi/reputationAbi';
+import { validationABI } from '../constants/abi/validationAbi';
 import {
   TREC_IDENTITY_REGISTRY_ADDRESS,
   TREC_REPUTATION_REGISTRY_ADDRESS,
@@ -29,7 +29,7 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
   // 3. Get the agent's tokenId from the identity registry after minting
   const { data: tokenId } = useReadContract({
     address: TREC_IDENTITY_REGISTRY_ADDRESS,
-    abi: registryAbi,
+    abi: registryABI,
     functionName: 'operatorToAgentId',
     args: [address as `0x${string}`],
     query: { enabled: isSuccess && !!address },
@@ -38,7 +38,7 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
   // 4. Read on-chain reputation from the reputation registry
   const { data: reputationData } = useReadContract({
     address: TREC_REPUTATION_REGISTRY_ADDRESS,
-    abi: reputationAbi,
+    abi: reputationABI,
     functionName: 'agentReputation',
     args: [tokenId as bigint],
     query: { enabled: isSuccess && tokenId !== undefined },
@@ -47,7 +47,7 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
   // 5. Read verification status from the validation registry
   const { data: isVerified } = useReadContract({
     address: TREC_VALIDATION_REGISTRY_ADDRESS,
-    abi: validationAbi,
+    abi: validationABI,
     functionName: 'isAgentVerified',
     args: [tokenId as bigint],
     query: { enabled: isSuccess && tokenId !== undefined },
@@ -58,7 +58,7 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
     try {
       await writeContractAsync({
         address: TREC_IDENTITY_REGISTRY_ADDRESS,
-        abi: registryAbi,
+        abi: registryABI,
         functionName: 'registerAgent',
         args: [ensName, ''],
       });

@@ -4,20 +4,15 @@ import React, { useState } from 'react';
 import { Wallet, ArrowDownCircle, Loader2, CheckCircle2, ChevronDown } from 'lucide-react';
 import { useReadContract, useWriteContract, useAccount } from 'wagmi';
 import { formatUnits, parseUnits } from 'viem';
+import { vaultABI } from '../constants/abi/vaultAbi';
+import { MOCK_USDC_ABI } from '../constants/abi/mockUsdcAbi';
+import { TREC_VAULT_ADDRESS, MOCK_USDC_ADDRESS } from '../constants/addresses';
 
 // --- CONFIG ---
-const VAULT_ADDRESS = "0x64d02fa756D452B3022e8637aA3fe47b914Bd31c";
-const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
-
-const VAULT_ABI = [
-  { "inputs": [], "name": "totalPoolLiquidity", "outputs": [{ "type": "uint256" }], "stateMutability": "view", "type": "function" },
-  { "inputs": [{ "name": "_amount", "type": "uint256" }], "name": "depositLiquidity", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
-  { "inputs": [], "name": "stakeBond", "outputs": [], "stateMutability": "payable", "type": "function" }
-] as const;
-
-const ERC20_ABI = [
-  { "inputs": [{ "name": "spender", "type": "address" }, { "name": "amount", "type": "uint256" }], "name": "approve", "outputs": [{ "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }
-] as const;
+const VAULT_ADDRESS = TREC_VAULT_ADDRESS;
+const USDC_ADDRESS = MOCK_USDC_ADDRESS;
+const VAULT_ABI = vaultABI;
+const ERC20_ABI = MOCK_USDC_ABI;
 
 // Token definitions with high-res icons
 type Token = { symbol: string; icon: string; isNative: boolean; decimals: number; color: string };
