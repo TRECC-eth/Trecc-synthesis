@@ -1,10 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { ShieldCheck, UserPlus, Loader2, Zap } from 'lucide-react';
-import { REGISTRY_ABI } from '../constants/abi/registryAbi';
-import { TREC_REGISTRY_ADDRESS } from '../constants/addresses';
+import { registryAbi } from '../constants/abi/registryAbi';
+import { reputationAbi } from '../constants/abi/reputationAbi';
+import { validationAbi } from '../constants/abi/validationAbi';
+import {
+  TREC_IDENTITY_REGISTRY_ADDRESS,
+  TREC_REPUTATION_REGISTRY_ADDRESS,
+  TREC_VALIDATION_REGISTRY_ADDRESS,
+} from '../constants/addresses';
 
 interface AgentRegistryProps {
   onAgentMinted?: () => void;
@@ -20,23 +26,41 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
   // 2. Wait for the transaction to actually hit the block
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
 
-  // 3. Read the Agent Profile back from the blockchain once minted
-  const { data: profile } = useReadContract({
-    address: TREC_REGISTRY_ADDRESS,
-    abi: REGISTRY_ABI,
-    functionName: 'agentProfiles',
-    args: [BigInt(0)], 
-    query: { enabled: isSuccess }
+  // 3. Get the agent's tokenId from the identity registry after minting
+  const { data: tokenId } = useReadContract({
+    address: TREC_IDENTITY_REGISTRY_ADDRESS,
+    abi: registryAbi,
+    functionName: 'operatorToAgentId',
+    args: [address as `0x${string}`],
+    query: { enabled: isSuccess && !!address },
+  });
+
+  // 4. Read on-chain reputation from the reputation registry
+  const { data: reputationData } = useReadContract({
+    address: TREC_REPUTATION_REGISTRY_ADDRESS,
+    abi: reputationAbi,
+    functionName: 'agentReputation',
+    args: [tokenId as bigint],
+    query: { enabled: isSuccess && tokenId !== undefined },
+  });
+
+  // 5. Read verification status from the validation registry
+  const { data: isVerified } = useReadContract({
+    address: TREC_VALIDATION_REGISTRY_ADDRESS,
+    abi: validationAbi,
+    functionName: 'isAgentVerified',
+    args: [tokenId as bigint],
+    query: { enabled: isSuccess && tokenId !== undefined },
   });
 
   const handleRegister = async () => {
     if (!ensName) return;
     try {
       await writeContractAsync({
-        address: TREC_REGISTRY_ADDRESS,
-        abi: REGISTRY_ABI,
+        address: TREC_IDENTITY_REGISTRY_ADDRESS,
+        abi: registryAbi,
         functionName: 'registerAgent',
-        args: [ensName],
+        args: [ensName, ''],
       });
       onAgentMinted?.();
     } catch {
@@ -81,15 +105,23 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
               <div>
                 <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest mb-2">Reputation</p>
                 <p className="text-xl font-medium text-white flex items-center gap-2">
-                  500 <Zap size={14} className="text-yellow-500/80 fill-yellow-500/20" />
+                  {reputationData ? reputationData[0].toString() : '—'}
+                  <Zap size={14} className="text-yellow-500/80 fill-yellow-500/20" />
                 </p>
               </div>
               <div>
                 <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest mb-2">Verification</p>
-                <p className="text-emerald-400 text-xs font-bold flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span> 
-                  SECURE
-                </p>
+                {isVerified ? (
+                  <p className="text-emerald-400 text-xs font-bold flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                    SECURE
+                  </p>
+                ) : (
+                  <p className="text-zinc-500 text-xs font-bold flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-600"></span>
+                    PENDING
+                  </p>
+                )}
               </div>
             </div>
           </div>

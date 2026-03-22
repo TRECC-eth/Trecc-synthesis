@@ -6,7 +6,7 @@ import { useAccount, useSendTransaction } from 'wagmi';
 import { encodeFunctionData, parseUnits } from 'viem';
 
 // IMPORTANT: Double-check these paths match where you saved your files!
-import { VAULT_ABI } from '../constants/abi/vaultAbi';
+import { vaultAbi } from '../constants/abi/vaultAbi';
 
 import { TREC_VAULT_ADDRESS } from '../constants/addresses';
 
@@ -52,7 +52,7 @@ export default function ElsaChat() {
         
         // Encode the exact smart contract call to your Vault!
         const encodedData = encodeFunctionData({
-          abi: VAULT_ABI,
+          abi: vaultAbi,
           functionName: 'issueLoan', // <-- Updated to match your real contract
           // issueLoan expects: [_borrower, _bitGoWallet, _loanAmount]
           args: [
