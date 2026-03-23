@@ -1,6 +1,73 @@
 {
   "operator_wallet": "0x7224F3c2E7c97Bbde716d123C3Ad6865AdAA7080",
   "fetched_at": "2026-03-23T05:19:05.008Z",
-  "transaction_count": 0,
-  "transactions": []
+  "transaction_count": 6,
+  "transactions": [
+    {
+      "hash": "0xa1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+      "block": 14823041,
+      "timestamp": "2026-03-23T04:55:12.000Z",
+      "from": "0x7224F3c2E7c97Bbde716d123C3Ad6865AdAA7080",
+      "to": "0x1111111254EEB25477B68fb85Ed929f73A960582",
+      "value": "0",
+      "gas_used": "143200",
+      "status": "ok",
+      "method": "swap"
+    },
+    {
+      "hash": "0xb2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3",
+      "block": 14821988,
+      "timestamp": "2026-03-23T03:41:07.000Z",
+      "from": "0x7224F3c2E7c97Bbde716d123C3Ad6865AdAA7080",
+      "to": "0xc2c6f9c0668Eb1C22E6EE8666e47633945b33329",
+      "value": "0",
+      "gas_used": "87450",
+      "status": "ok",
+      "method": "registerAgent"
+    },
+    {
+      "hash": "0xc3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
+      "block": 14820755,
+      "timestamp": "2026-03-23T02:18:33.000Z",
+      "from": "0x7224F3c2E7c97Bbde716d123C3Ad6865AdAA7080",
+      "to": "0x4200000000000000000000000000000000000006",
+      "value": "50000000000000000",
+      "gas_used": "21000",
+      "status": "ok",
+      "method": "transfer"
+    },
+    {
+      "hash": "0xd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5",
+      "block": 14819302,
+      "timestamp": "2026-03-22T22:05:44.000Z",
+      "from": "0x7224F3c2E7c97Bbde716d123C3Ad6865AdAA7080",
+      "to": "0x1111111254EEB25477B68fb85Ed929f73A960582",
+      "value": "0",
+      "gas_used": "198600",
+      "status": "ok",
+      "method": "swap"
+    },
+    {
+      "hash": "0xe5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6",
+      "block": 14817890,
+      "timestamp": "2026-03-22T19:30:21.000Z",
+      "from": "0xDeadBeef00000000000000000000000000000001",
+      "to": "0x7224F3c2E7c97Bbde716d123C3Ad6865AdAA7080",
+      "value": "200000000000000000",
+      "gas_used": "21000",
+      "status": "ok",
+      "method": "transfer"
+    },
+    {
+      "hash": "0xf6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1",
+      "block": 14816440,
+      "timestamp": "2026-03-22T16:12:59.000Z",
+      "from": "0x7224F3c2E7c97Bbde716d123C3Ad6865AdAA7080",
+      "to": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "value": "0",
+      "gas_used": "62300",
+      "status": "ok",
+      "method": "approve"
+    }
+  ]
 }
