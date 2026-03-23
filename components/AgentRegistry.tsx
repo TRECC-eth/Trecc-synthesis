@@ -61,6 +61,7 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
         abi: registryABI,
         functionName: 'registerAgent',
         args: [ensName, ''],
+        gas: BigInt(500000),
       });
       onAgentMinted?.();
     } catch {
@@ -84,7 +85,7 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
         <div className="relative p-8 rounded-[2rem] bg-[#0a0a0a] border border-white/10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
           {/* Ambient Holographic Glow */}
           <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/5 rounded-full blur-[80px] pointer-events-none" />
-          
+
           <div className="relative z-10">
             <div className="flex justify-between items-start mb-10">
               <div className="p-3 bg-zinc-900 rounded-2xl border border-white/5">
@@ -141,8 +142,8 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
           Agent Identity Designation
         </label>
         <div className="relative">
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="e.g. elsa.eth"
             value={ensName}
             onChange={(e) => setEnsName(e.target.value)}
@@ -152,7 +153,7 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
         </div>
       </div>
 
-      <button 
+      <button
         onClick={handleRegister}
         disabled={!ensName || isMinting || isConfirming}
         className="w-full bg-white hover:bg-zinc-200 text-black font-bold py-4 rounded-2xl shadow-[0_10px_30px_-10px_rgba(255,255,255,0.1)] flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-30"
@@ -173,9 +174,9 @@ export default function AgentRegistry({ onAgentMinted }: AgentRegistryProps) {
       </button>
 
       {hash && (
-        <a 
-          href={`https://sepolia.basescan.org/tx/${hash}`} 
-          target="_blank" 
+        <a
+          href={`https://sepolia.basescan.org/tx/${hash}`}
+          target="_blank"
           rel="noopener noreferrer"
           className="block text-center text-[10px] text-zinc-600 hover:text-zinc-400 uppercase tracking-widest transition-colors"
         >
