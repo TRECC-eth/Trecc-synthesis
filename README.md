@@ -1,25 +1,25 @@
-# TRECC Protocol — Trustless Reputation & Evaluation Credit
+# TRECC Protocol — The Credit Layer For Machine Economies
 
-> **ERC-8004 AI Agent Lending** — A decentralized lending protocol where mathematically-verified autonomous AI agents can borrow USDC while operators post ETH collateral bonds.
+> **ERC-8004 AI Agent Lending** — A decentralized lending protocol where mathematically-verified autonomous AI agents can borrow USDC through deterministic execution containment.
 
 ---
 
 ## What is TRECC?
 
-TRECC is a trustless lending infrastructure built for the agentic economy. It bridges **capital providers** (lenders) with **autonomous AI agents** (borrowers) using on-chain identity, reputation scoring, and cryptographic KYC — replacing traditional credit checks with verifiable on-chain behavior.
+TRECC is a trustless lending infrastructure built for the agentic economy. It bridges **capital providers** (lenders) with **autonomous AI agents** (borrowers) using on-chain identity, reputation scoring, and cryptographic KYC — replacing traditional overcollateralization with verifiable on-chain behavior and secure execution environments.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4f46e5', 'lineColor': '#a78bfa', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e1b4b'}}}%%
 graph LR
     A["🏦 Capital Provider\n(Lender)"] -->|"Deposits USDC"| B[("🔒 TRECVault\nLending Pool")]
-    B -->|"Issues Loan\n(USDC → Coinbase Vault)"| C["🤖 AI Agent\n(ERC-8004)"]
-    C -->|"Repays Loan + Interest"| B
-    D["👤 Operator"] -->|"Stakes ETH Bond"| B
+    B -->|"Provisions Liquidity\n(Contained Environment)"| C["🤖 AI Agent\n(ERC-8004)"]
+    C -->|"Repays Principal + Yield"| B
+    D["👤 App User"] -->|"Initializes Containment"| B
     D -->|"Registers & Manages"| C
     B -->|"Earns APY"| A
     E["🧾 TRECIdentityRegistry\n(Soulbound NFT)"] -->|"Identity Check"| B
     F["⭐ TRECReputationRegistry\n(Credit Score)"]--->|"Reputation Check"| B
-    G["✅ TRECValidationRegistry\n(EIP-712 KYC)"] --->|"KYC Verification"| B
+    G["✅ TRECValidationRegistry\n(EIP-712 KYC)"] --->|"Compliance Verification"| B
 
     style A fill:#4f46e5,color:#fff,stroke:#818cf8
     style B fill:#0f172a,color:#a78bfa,stroke:#6366f1
@@ -37,7 +37,7 @@ graph LR
 | File | Path | Description |
 |---|---|---|
 | `agent.json` | `TRECC_APP/data/agent.json` | Agent identity and configuration data |
-| `agent_log.json` | `TRECC_APP/data/agent_log.json` | Agent activity and interaction logs |
+| `agent_log.json` | `TRECC_APP/data/agent_log.json` | Agent execution and interaction logs |
 
 ---
 
@@ -109,18 +109,18 @@ graph TD
 classDiagram
     class TRECVault {
         +depositLiquidity(amount)
-        +stakeBond() payable
-        +issueLoan(operator, agentWallet, amount) onlyOwner
-        +repayLoan(agentId, amount)
-        +slashAndRecover(operator, shortfall) onlyOwner
+        +initializeContainment() payable
+        +provisionAgentLiquidity(appUser, agentWallet, amount) onlyOwner
+        +repayProtocol(agentId, amount)
+        +executeAlgorithmicLiquidation(appUser, shortfall) onlyOwner
         -totalPoolLiquidity uint256
         -lenderDeposits mapping
-        -operatorBonds mapping
+        -containmentParameters mapping
     }
 
     class TRECIdentityRegistry {
         +registerAgent(ensName, metadataURI)
-        +getAgentId(operator) uint256
+        +getAgentId(appUser) uint256
         -ERC721 Soulbound NFT
         -_update() override no-transfer
     }
@@ -159,10 +159,10 @@ classDiagram
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#d97706', 'primaryTextColor': '#fff', 'primaryBorderColor': '#b45309', 'lineColor': '#fbbf24', 'secondaryColor': '#451a03'}}}%%
 stateDiagram-v2
     [*] --> Registered : registerAgent()
-    Registered --> Borrowing : issueLoan() ✅
-    Borrowing --> Repaid : repayLoan() → Score +1
-    Repaid --> Borrowing : Next loan cycle
-    Borrowing --> Liquidated : slashAndRecover() → Score -50
+    Registered --> Borrowing : provisionAgentLiquidity() ✅
+    Borrowing --> Repaid : repayProtocol() → Score +1
+    Repaid --> Borrowing : Next execution cycle
+    Borrowing --> Liquidated : executeAlgorithmicLiquidation() → Score -50
     Liquidated --> Registered : Can re-register
     Repaid --> [*] : Agent retires
 ```
@@ -212,7 +212,7 @@ graph LR
 | Data Fetching | TanStack React Query 5 |
 | Charts | Liveline |
 | Icons | Lucide React |
-| Agent Vault | Coinbase (CDP) |
+| Agent Vault | Secure MPC Infrastructure |
 | ENS | Viem ENS utilities + ethers.js 6 |
 
 ### Smart Contracts
@@ -232,7 +232,7 @@ graph LR
 
 - Node.js 18+
 - A wallet (MetaMask, Coinbase Wallet, etc.)
-- Sepolia ETH (for gas + 0.01 ETH collateral)
+- Sepolia ETH (for gas and protocol transactions)
 - Sepolia USDC (for lending)
 
 ### Setup
@@ -266,8 +266,8 @@ npx hardhat ignition deploy ./ignition/modules/Deploy.ts --network sepolia
 | `NEXT_PUBLIC_PROJECT_ID` | Reown / WalletConnect project ID |
 | `TRECC_ENS_OWNER_PRIVATE_KEY` | Private key of `trecc.eth` owner (for subname registration) |
 | `SEPOLIA_RPC_URL` | Sepolia RPC endpoint |
-| `COINBASE_API_SECRET` | *(Optional)* Coinbase integration |
-| `COINBASE_BIN_API_KEY` | *(Optional)* Coinbase API key |
+| `MPC_API_SECRET` | *(Optional)* Vault integration |
+| `MPC_BIN_API_KEY` | *(Optional)* Vault API key |
 
 ---
 
@@ -277,33 +277,33 @@ npx hardhat ignition deploy ./ignition/modules/Deploy.ts --network sepolia
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#db2777', 'primaryTextColor': '#fff', 'primaryBorderColor': '#be185d', 'lineColor': '#f472b6'}}}%%
 sequenceDiagram
     actor Lender
-    actor Operator
+    actor App User
     participant App as TRECC App
     participant ENS as ENS NameWrapper
     participant ID as TRECIdentityRegistry
     participant KYC as TRECValidationRegistry
     participant Vault as TRECVault
-    participant Agent as AI Agent (MPC)
+    participant Agent as AI Agent (Contained Env)
 
     Lender->>App: Connect wallet
     Lender->>Vault: depositLiquidity(USDC)
     Vault-->>Lender: ✅ Deposit recorded, earns APY
 
-    Operator->>App: Connect wallet
-    Operator->>ENS: Register subname (e.g. alice.trecc.eth)
-    Operator->>App: Submit KYC form
-    Operator->>Vault: stakeBond() [0.01 ETH]
-    Operator->>ID: registerAgent(ensName, metadataURI)
-    ID-->>Operator: 🪙 Soulbound NFT minted (tokenId)
-    Operator->>KYC: submitValidationSignature(EIP-712 sig)
-    KYC-->>Operator: ✅ KYC verified
+    App User->>App: Connect wallet
+    App User->>ENS: Register subname (e.g. alice.trecc.eth)
+    App User->>App: Submit KYC form
+    App User->>Vault: initializeContainment()
+    App User->>ID: registerAgent(ensName, metadataURI)
+    ID-->>App User: 🪙 Soulbound NFT minted (tokenId)
+    App User->>KYC: submitValidationSignature(EIP-712 sig)
+    KYC-->>App User: ✅ KYC verified
 
-    Operator->>App: Chat with Elsa AI
-    App->>Vault: issueLoan(operator, agentWallet, amount)
-    Vault-->>Agent: 💸 USDC transferred to Coinbase Vault
+    App User->>App: Chat with Elsa AI
+    App->>Vault: provisionAgentLiquidity(appUser, agentWallet, amount)
+    Vault-->>Agent: 💸 USDC routed to Execution Sandbox
 
-    Agent->>Vault: repayLoan(agentId, amount)
-    Vault-->>Agent: ✅ Loan repaid, credit score +1
+    Agent->>Vault: repayProtocol(agentId, amount)
+    Vault-->>Agent: ✅ Settlement recorded, credit score +1
 ```
 
 ---
@@ -314,6 +314,5 @@ sequenceDiagram
 - **On-chain Credit Scores** — +1 per repayment, −50 per liquidation
 - **EIP-712 KYC** — Cryptographically signed off-chain verification, verified on-chain
 - **ENS Subnames** — Every agent gets a human-readable `<name>.trecc.eth` identity
-- **Coinbase Vault** — Coinbase-powered agent execution wallets and vault infrastructure
+- **Execution Containment** — Capital is routed into secure, protocol-monitored sandboxes to protect lender principal.
 - **Intent-based UX** — Elsa AI co-pilot translates natural language to contract calls
-
